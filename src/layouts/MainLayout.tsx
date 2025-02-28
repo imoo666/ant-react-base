@@ -33,11 +33,11 @@ export default function MainLayout() {
       </Sider>
       <Layout
         className={clsx(
-          "transition-[margin] duration-200 min-h-screen",
+          "transition-[margin] duration-200 h-screen",
           collapsed ? "ml-20" : "ml-[200px]"
         )}
       >
-        <Content className="p-6 min-h-[calc(100vh-64px)]">
+        <Content className="p-6 min-h-[calc(100vh-64px)] overflow-y-auto">
           <Outlet />
         </Content>
       </Layout>
