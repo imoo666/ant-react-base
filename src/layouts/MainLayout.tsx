@@ -32,7 +32,7 @@ export default function MainLayout() {
         />
       </Sider>
       <Layout>
-        <Content className="p-6 min-h-[calc(100vh-64px)] overflow-y-auto">
+        <Content className="p-6 h-[calc(100vh-64px)] overflow-y-auto">
           <Outlet />
         </Content>
       </Layout>
