@@ -1,5 +1,4 @@
 import { Layout, Menu } from "antd";
-import clsx from "clsx";
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { renderMenuItems, routes } from "../config/routes";
