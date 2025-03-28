@@ -1,0 +1,50 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 检查是否有需要提交的文件(已暂存的文件)
+if [ -z "$(git diff --staged --name-only)" ]; then
+  echo "❌ 错误: 没有暂存的文件，无法提交。" >/dev/tty
+  exit 1
+fi
+
+# 检查是否有未 add 的文件
+if [ -n "$(git diff --name-only)" ]; then
+  echo "❌ 警告: 当前项目未完全 add，存在未暂存的修改。" >/dev/tty
+  printf "是否继续？按 y 继续，按 a 全部 add 并继续，按其他键取消: " >/dev/tty
+  
+  read -n 1 REPLY </dev/tty
+  echo >/dev/tty
+    
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "继续提交..." >/dev/tty
+  elif [[ $REPLY =~ ^[Aa]$ ]]; then
+    echo "执行 git add . 添加所有文件..." >/dev/tty
+    git add .
+    echo "✅ 已成功添加所有文件，继续提交..." >/dev/tty
+  else
+    echo "❌ 提交已取消" >/dev/tty
+    exit 1
+  fi
+fi
+
+# 获取暂存区的文件列表
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(js|jsx|ts|tsx)$')
+
+# 执行 ESLint 扫描，只检查暂存区的文件
+echo "正在执行 ESLint 检查暂存区文件..." >/dev/tty
+echo "$STAGED_FILES" | xargs npx eslint
+
+# 检查 ESLint 是否通过
+if [ $? -ne 0 ]; then
+  echo "❌ESLint 检查未通过，请修复上述问题后再提交" >/dev/tty
+  exit 1
+else
+  echo "✅ESLint 检查通过！\n" >/dev/tty
+fi
+
+# 添加 TypeScript 类型检查，只检查暂存区的文件
+echo "执行全局 TypeScript 类型检查..." >/dev/tty
+npx tsc -b
+
+
+
